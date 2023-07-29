@@ -4,12 +4,17 @@
 
 find_package(FastFloat CONFIG REQUIRED)
 find_package(FMT CONFIG REQUIRED)
-find_package(
-  HDF5
-  CONFIG
-  REQUIRED
-  QUIET
-  COMPONENTS C)
+
+if(NOT DEFINED HDF5_C_LIBRARIES)
+  set(HDF5_PREFER_PARALLEL OFF)
+  find_package(
+    HDF5
+    CONFIG
+    REQUIRED
+    QUIET
+    COMPONENTS C)
+endif()
+
 find_package(HighFive CONFIG REQUIRED)
 find_package(phmap CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
