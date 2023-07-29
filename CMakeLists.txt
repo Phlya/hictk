@@ -131,6 +131,7 @@ option(HICTK_BUILD_BENCHMARKS "Build benchmarks" OFF)
 option(HICTK_BUILD_PYTHON_BINDINGS "Build pybind11" OFF)
 option(HICTK_WITH_EIGEN "Build with Eigen3 support" ON)
 option(HICTK_BUILD_TOOLS "Build cli tools" ON)
+option(HICTK_INSTALL "Generate install files" ON)
 
 if(HICTK_WITH_EIGEN)
   target_compile_definitions(hictk_project_options INTERFACE HICTK_WITH_EIGEN)
@@ -161,4 +162,6 @@ if(HICTK_BUILD_PYTHON_BINDINGS)
 endif()
 
 
-include(cmake/Install.cmake)
+if (HICTK_INSTALL)
+  include(cmake/Install.cmake)
+endif()
