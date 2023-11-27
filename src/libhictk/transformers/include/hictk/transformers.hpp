@@ -6,4 +6,5 @@
 
 #include "hictk/transformers/coarsen.hpp"
 #include "hictk/transformers/join_genomic_coords.hpp"
+#include "hictk/transformers/random_sampler.hpp"
 #include "hictk/transformers/stats.hpp"

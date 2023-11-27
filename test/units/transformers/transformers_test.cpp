@@ -108,6 +108,36 @@ TEST_CASE("Transformers (cooler)", "[transformers][short]") {
     CHECK(max(first, last) == 1'357'124);
     CHECK(sum(first, last) == 112'660'799);
   }
+
+  SECTION("random sample") {
+    const auto path = datadir / "cooler/cooler_test_file.cool";
+    const std::uint64_t seed = 1234567890;
+    const double frac = 0.75;
+
+    const cooler::File clr(path.string());
+    const auto sel = clr.fetch("1");
+
+    std::mt19937_64 rand_eng{seed};
+    const auto pixels = sel.read_all<std::int32_t>();
+    std::vector<ThinPixel<std::int32_t>> subsampled_pixels_expected{};
+
+    std::for_each(sel.template begin<std::int32_t>(), sel.template end<std::int32_t>(),
+                  [&](ThinPixel<std::int32_t> p) {
+                    p.count = std::binomial_distribution<std::int32_t>{p.count, frac}(rand_eng);
+                    if (p.count != 0) {
+                      subsampled_pixels_expected.push_back(p);
+                    }
+                  });
+
+    const transformers::PixelRandomSampler sampler(sel.template begin<std::int32_t>(),
+                                                   sel.template end<std::int32_t>(), frac, seed);
+
+    const auto subsampled_pixels = sampler.read_all();
+    REQUIRE(subsampled_pixels.size() == subsampled_pixels_expected.size());
+    for (std::size_t i = 0; i < subsampled_pixels.size(); ++i) {
+      CHECK(subsampled_pixels_expected[i] == subsampled_pixels[i]);
+    }
+  }
 }
 
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
