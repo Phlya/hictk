@@ -174,6 +174,35 @@ TEST_CASE("Transformers (hic)", "[transformers][short]") {
       CHECK(v1[i] == v2[i].to_thin());
     }
   }
+
+  SECTION("random sample") {
+    const std::uint64_t seed = 1234567890;
+    const double frac = 0.75;
+
+    const hic::File hf(path.string(), 500'000);
+    const auto sel = hf.fetch("chr2L");
+
+    std::mt19937_64 rand_eng{seed};
+    const auto pixels = sel.read_all<std::int32_t>();
+    std::vector<ThinPixel<std::int32_t>> subsampled_pixels_expected{};
+
+    std::for_each(sel.template begin<std::int32_t>(), sel.template end<std::int32_t>(),
+                  [&](ThinPixel<std::int32_t> p) {
+                    p.count = std::binomial_distribution<std::int32_t>{p.count, frac}(rand_eng);
+                    if (p.count != 0) {
+                      subsampled_pixels_expected.push_back(p);
+                    }
+                  });
+
+    const transformers::PixelRandomSampler sampler(sel.template begin<std::int32_t>(),
+                                                   sel.template end<std::int32_t>(), frac, seed);
+
+    const auto subsampled_pixels = sampler.read_all();
+    REQUIRE(subsampled_pixels.size() == subsampled_pixels_expected.size());
+    for (std::size_t i = 0; i < subsampled_pixels.size(); ++i) {
+      CHECK(subsampled_pixels_expected[i] == subsampled_pixels[i]);
+    }
+  }
 }
 
 }  // namespace hictk::test::transformers
