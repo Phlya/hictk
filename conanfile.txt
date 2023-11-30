@@ -5,6 +5,7 @@
 [requires]
 boost/1.83.0#f0c3932db7f65b606ed78357ecbdcbef
 bshoshany-thread-pool/3.5.0#3c9fd1e21a688432b7f31b40d2d168ee
+cista/0.11#2a03b623106166d42ff1b0aba39f59f3
 cli11/2.3.2#1424b9b1d9e3682a7122f415b078b4d7
 eigen/3.4.0#2e192482a8acff96fe34766adca2b24c
 fast_float/5.2.0#9bf1a3fac625789f2b571d43efb8013b

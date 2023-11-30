@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 find_package(Boost REQUIRED COMPONENTS headers filesystem)
+find_package(cista REQUIRED)
 find_package(CLI11 REQUIRED)
 find_package(FMT REQUIRED)
 find_package(readerwriterqueue REQUIRED)
@@ -22,6 +23,7 @@ target_sources(
           ${CMAKE_CURRENT_SOURCE_DIR}/cli/cli_fix_mcool.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/cli/cli_load.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/cli/cli_merge.cpp
+          ${CMAKE_CURRENT_SOURCE_DIR}/cli/cli_sample.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/cli/cli_validate.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/cli/cli_zoomify.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/balance/balance.cpp
@@ -32,6 +34,7 @@ target_sources(
           ${CMAKE_CURRENT_SOURCE_DIR}/fix_mcool/fix_mcool.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/load/load.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/merge/merge.cpp
+          ${CMAKE_CURRENT_SOURCE_DIR}/sample/sample.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/validate/validate.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/zoomify/zoomify.cpp)
 
@@ -42,6 +45,7 @@ target_link_system_libraries(
   hictk
   PRIVATE
   Boost::headers
+  cista::cista
   CLI11::CLI11
   readerwriterqueue::readerwriterqueue
   std::filesystem

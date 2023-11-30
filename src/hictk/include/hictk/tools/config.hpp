@@ -126,6 +126,23 @@ struct MergeConfig {
   std::uint8_t verbosity{4};
 };
 
+struct SampleConfig {
+  std::string uri{};
+  std::string output_uri{};
+
+  double fraction{};
+  std::uint64_t count{};
+  std::uint64_t seed{15518520935986707649ULL};
+
+  bool spawn_writer_process{false};
+  bool spawn_reader_process{false};
+  std::string queue_identifier{};
+  std::string argv0{};
+
+  bool force{false};
+  std::uint8_t verbosity{4};
+};
+
 struct ValidateConfig {
   std::string uri{};
   bool validate_index{false};
@@ -153,6 +170,7 @@ using Config = std::variant<std::monostate,
                             FixMcoolConfig,
                             LoadConfig,
                             MergeConfig,
+                            SampleConfig,
                             ValidateConfig,
                             ZoomifyConfig>;
 // clang-format on

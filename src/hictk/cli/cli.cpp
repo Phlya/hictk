@@ -37,6 +37,8 @@ auto Cli::parse_arguments() -> Config {
       _subcommand = subcommand::load;
     } else if (_cli.get_subcommand("merge")->parsed()) {
       _subcommand = subcommand::merge;
+    } else if (_cli.get_subcommand("sample")->parsed()) {
+      _subcommand = subcommand::sample;
     } else if (_cli.get_subcommand("validate")->parsed()) {
       _subcommand = subcommand::validate;
     } else if (_cli.get_subcommand("zoomify")->parsed()) {
@@ -85,6 +87,8 @@ std::string_view Cli::subcommand_to_str(subcommand s) noexcept {
       return "load";
     case merge:
       return "merge";
+    case sample:
+      return "sample";
     case validate:
       return "validate";
     case zoomify:
@@ -107,6 +111,7 @@ void Cli::make_cli() {
   make_fix_mcool_subcommand();
   make_load_subcommand();
   make_merge_subcommand();
+  make_sample_subcommand();
   make_validate_subcommand();
   make_zoomify_subcommand();
 }
@@ -130,6 +135,9 @@ void Cli::validate_args() const {
       break;
     case merge:
       validate_merge_subcommand();
+      break;
+    case sample:
+      validate_sample_subcommand();
       break;
     case validate:
       break;
@@ -160,6 +168,9 @@ void Cli::transform_args() {
       break;
     case merge:
       transform_args_merge_subcommand();
+      break;
+    case sample:
+      transform_args_sample_subcommand();
       break;
     case validate:
       break;
