@@ -8,6 +8,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <filesystem>
@@ -431,4 +432,45 @@ TEST_CASE("HiC: pixel selector fetch all (observed NONE BP 100000)", "[hic][long
 #endif
     }
   }
+}
+
+TEST_CASE("HiC: pixel selector fetch (invalid queries)", "[hic][short]") {
+  const File f(pathV8, 1'000, MatrixType::observed, MatrixUnit::BP);
+
+  CHECK_THROWS_WITH(f.fetch(""), Catch::Matchers::Equals("query is empty"));
+  CHECK_THROWS_WITH(f.fetch("chr3"), Catch::Matchers::ContainsSubstring("invalid chromosome"));
+
+  CHECK_THROWS_WITH(f.fetch(":0-1"), Catch::Matchers::ContainsSubstring("invalid chromosome"));
+  CHECK_THROWS_WITH(f.fetch("-:0-1"), Catch::Matchers::ContainsSubstring("invalid chromosome"));
+  CHECK_THROWS_WITH(f.fetch("::0-1"), Catch::Matchers::ContainsSubstring("invalid chromosome"));
+
+  CHECK_THROWS_WITH(f.fetch("chr2L:"), Catch::Matchers::ContainsSubstring("malformed"));
+  CHECK_THROWS_WITH(f.fetch("chr2L-"), Catch::Matchers::ContainsSubstring("malformed"));
+  CHECK_THROWS_WITH(f.fetch("chr2L:-"), Catch::Matchers::ContainsSubstring("malformed"));
+  CHECK_THROWS_WITH(f.fetch("chr2L-0-1"), Catch::Matchers::ContainsSubstring("malformed"));
+  CHECK_THROWS_WITH(f.fetch("chr2L:0:1"), Catch::Matchers::ContainsSubstring("malformed"));
+  CHECK_THROWS_WITH(f.fetch("chr2L:01"), Catch::Matchers::ContainsSubstring("malformed"));
+  CHECK_THROWS_WITH(f.fetch("chr2L:-01"), Catch::Matchers::ContainsSubstring("malformed"));
+  CHECK_THROWS_WITH(f.fetch("chr2L:-01"), Catch::Matchers::ContainsSubstring("malformed"));
+
+  CHECK_THROWS_WITH(f.fetch("chr2L:-1"),
+                    Catch::Matchers::ContainsSubstring("missing start position"));
+  CHECK_THROWS_WITH(f.fetch("chr2L:0-"), Catch::Matchers::ContainsSubstring("missing end position"));
+
+  CHECK_THROWS_WITH(f.fetch("chr2L:4294967296-0"),
+                    Catch::Matchers::ContainsSubstring("invalid start position"));
+  CHECK_THROWS_WITH(f.fetch("chr2L:0-4294967296"),
+                    Catch::Matchers::ContainsSubstring("invalid end position"));
+
+  CHECK_THROWS_WITH(
+      f.fetch("chr2L:0-0"),
+      Catch::Matchers::ContainsSubstring("end position should be greater than the start position"));
+  CHECK_THROWS_WITH(
+      f.fetch("chr2L:10-5"),
+      Catch::Matchers::ContainsSubstring("end position should be greater than the start position"));
+
+  CHECK_THROWS_WITH(f.fetch("chr2L:50,000-100,000", "chr2L:0-50,000"),
+                    Catch::Matchers::ContainsSubstring("overlaps with the lower triangle"));
+  CHECK_THROWS_WITH(f.fetch("chr3L:0-50,000", "chr2L:0-50,000"),
+                    Catch::Matchers::ContainsSubstring("overlaps with the lower triangle"));
 }

@@ -232,6 +232,9 @@ TEST_CASE("Cooler: pixel selector 1D queries", "[pixel_selector][short]") {
     CHECK_THROWS_WITH(f.fetch("chr1:10-5"),
                       Catch::Matchers::ContainsSubstring(
                           "end position should be greater than the start position"));
+
+    CHECK_THROWS_WITH(f.fetch("chr1:10-20", "chr1:0-10"),
+                      Catch::Matchers::ContainsSubstring("overlaps with the lower triangle"));
   }
 }
 

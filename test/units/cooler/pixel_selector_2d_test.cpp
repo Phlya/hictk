@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 #include <cstdint>
 
 #include "hictk/cooler/cooler.hpp"
@@ -101,6 +103,11 @@ TEST_CASE("Cooler: pixel selector 2D queries", "[pixel_selector][short]") {
     SECTION("empty") {
       auto selector = f.fetch("1:0-50000", "2:0-50000");
       CHECK(selector.begin<T>() == selector.end<T>());
+    }
+
+    SECTION("below diagonal") {
+      CHECK_THROWS_WITH(f.fetch("2:0-50000", "1:0-50000"),
+                        Catch::Matchers::ContainsSubstring("overlaps with the lower triangle"));
     }
   }
 }
